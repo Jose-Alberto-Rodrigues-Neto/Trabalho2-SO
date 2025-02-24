@@ -4,16 +4,18 @@ import struct
 
 #Criar
 def criar_nome_tam(nome: str, tam: int):
-    if tam <= 0:
-        print("Erro: 'tam' deve ser maior que zero.")
-        return
-    
     nome_arquivo = nome + ".bin"
     os.makedirs("directory", exist_ok=True)
     path = os.path.join("directory", nome_arquivo)
     if(os.path.exists(path)):
         print("Erro: o arquivo já existe!")
         return
+    
+    if tam <= 0:
+        print("Erro: 'tam' deve ser maior que zero.")
+        return
+    
+    
     numeros = [random.randint(0, 2**31 - 1) for _ in range(tam)]
 
     try:
@@ -60,5 +62,9 @@ def arquivo_bytes_tam(nome: str, dir: str):
     try:
         tamanho = os.path.getsize(path)
         return tamanho
+    except FileNotFoundError:
+        print(f"Erro: arquivo não encontrado")
+        return None
     except Exception as e:
         print(f"Erro: {e}.")
+        return None
