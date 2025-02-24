@@ -1,5 +1,5 @@
 import os
-from methods.crud_arquivos import arquivo_bytes_tam
+from functions.crud_arquivos import arquivo_bytes_tam
 
 def listar():
     # Listar arquivos e pastas
