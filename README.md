@@ -1,3 +1,10 @@
+Como rodar o projeto
+
+```shell
+
+python main.py 
+
+```
 # Trabalho2-SO
 
 Criar um mini sistema com gerenciamento de memória e sistema de arquivos próprios.
