@@ -15,3 +15,12 @@ def listar():
     espaco_livre = (1000000000 - espaco)/1000000000
 
     print(f"Total: 1 GB | Espaço ocupado: {espaco_ocupado} | Espaço livre: {espaco_livre}")
+
+def espaco_ocupado_disco():
+    arquivos = os.listdir("directory")
+    espaco = 0
+    for arquivo in arquivos:
+        tam = arquivo_bytes_tam(arquivo, "directory")
+        espaco += tam
+
+    return espaco / 1000000000
