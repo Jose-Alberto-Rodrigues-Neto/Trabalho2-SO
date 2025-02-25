@@ -1,42 +1,45 @@
-from functions.directory import espaco_ocupado_disco
+from functions.directory import espaco_ocupado_disco, MOUNT_POINT
 import os
 import random
 import struct
 
 #Criar
 def criar_nome_tam(nome: str, tam: int):
-    espaco_ocupado = espaco_ocupado_disco()
-    if (espaco_ocupado >= 1):
-        print("Erro: Não é mais possível criar arquivos, o disco está cheio!")
+    if not os.path.ismount(MOUNT_POINT):
+        print("Erro: O disco virtual não está montado!")
         return
     
-    nome_arquivo = nome + ".bin"
-    os.makedirs("directory", exist_ok=True)
-    path = os.path.join("directory", nome_arquivo)
-    if(os.path.exists(path)):
-        print("Erro: o arquivo já existe!")
+    if espaco_ocupado_disco() >= 1:  # Verifica se o disco está cheio
+        print("Erro: Não é mais possível criar arquivos, o disco está cheio!")
         return
     
     if tam <= 0:
         print("Erro: 'tam' deve ser maior que zero.")
         return
     
+    nome_arquivo = f"{nome}.bin"
+    path = os.path.join(MOUNT_POINT, nome_arquivo)
+
+    if os.path.exists(path):
+        print(f"Erro: O arquivo '{nome_arquivo}' já existe!")
+        return
     
-    numeros = [random.randint(0, 2**31 - 1) for _ in range(tam)]
-
     try:
+        numeros = [random.randint(0, 2**31 - 1) for _ in range(tam)]
+        
         with open(path, "wb") as f:
-                for num in numeros:
-                    f.write(struct.pack("I", num))
-        print(f"Arquivo '{nome_arquivo}' criado com {tam} números.")
-
+            for num in numeros:
+                f.write(struct.pack("I", num))
+        
+        print(f"Arquivo '{nome_arquivo}' criado com {tam} números dentro do disco virtual.")
+    
     except Exception as e:
         print(f"Erro inesperado: {e}")
     
 #Ler
 def ler_arquivo_bin(nome: str):
     nome_arquivo = nome + ".bin"
-    path = os.path.join("directory", nome_arquivo)
+    path = os.path.join(MOUNT_POINT, nome_arquivo)
     numeros = []
 
     try:
@@ -50,6 +53,8 @@ def ler_arquivo_bin(nome: str):
     except FileNotFoundError:
         print(f"Erro: Arquivo '{nome_arquivo}' não encontrado.")
         return None
+    except Exception as e:
+        print(f"Erro inesperado: {e}")
 
     return numeros
 
