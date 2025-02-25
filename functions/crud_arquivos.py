@@ -1,4 +1,5 @@
-from functions.directory import espaco_ocupado_disco, MOUNT_POINT
+from functions.directory import espaco_ocupado_disco
+from functions.disk_utils import MOUNT_POINT
 import os
 import random
 import struct
@@ -61,7 +62,7 @@ def ler_arquivo_bin(nome: str):
 #Deletar
 def apagar_nome(nome: str):
     nome_arquivo = nome + ".bin"
-    path = os.path.join("directory", nome_arquivo)
+    path = os.path.join(MOUNT_POINT, nome_arquivo)
     try:
         os.remove(path)
         print(f"Arquivo '{nome_arquivo}' deletado com sucesso.")
@@ -69,15 +70,3 @@ def apagar_nome(nome: str):
         print(f"Erro: Arquivo {nome_arquivo} não encontrado")
     except Exception as e:
         print(f"Erro inesperado: {e}")
-
-def arquivo_bytes_tam(nome: str, dir: str):
-    path = os.path.join(dir, nome)
-    try:
-        tamanho = os.path.getsize(path)
-        return tamanho
-    except FileNotFoundError:
-        print(f"Erro: arquivo não encontrado")
-        return None
-    except Exception as e:
-        print(f"Erro: {e}.")
-        return None

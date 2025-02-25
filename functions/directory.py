@@ -1,13 +1,20 @@
+from functions.disk_utils import MOUNT_POINT, DISK_NAME, DISK_SIZE, LOOP_DEVICE
 import os
 import subprocess
 
-# Definições do disco virtual
-DISK_NAME = "virtual_disk.img"
-DISK_SIZE = 1 * 1024 * 1024 * 1024  # 1GB
-MOUNT_POINT = "mnt_virtual"
-LOOP_DEVICE = "/dev/loop0"  # Dispositivo de loop fixo
+def arquivo_bytes_tam(nome: str) -> float | None:
+    path = os.path.join(MOUNT_POINT, nome)
+    try:
+        tamanho = os.path.getsize(path)
+        return tamanho
+    except FileNotFoundError:
+        print(f"Erro: arquivo não encontrado")
+        return None
+    except Exception as e:
+        print(f"Erro: {e}.")
+        return None
 
-def create_virtual_disk():
+def criar_disco_virtual():
     # Criar o disco virtual se ainda não existir
     if not os.path.exists(DISK_NAME):
         with open(DISK_NAME, "wb") as file:
@@ -72,13 +79,23 @@ def create_virtual_disk():
 
     print(f"Disco virtual montado com sucesso em '{MOUNT_POINT}'!")
 
-def list_files_in_virtual_disk():
+def listar():
+    espaco = 0
     if os.path.exists(MOUNT_POINT) and os.path.ismount(MOUNT_POINT):
         print(f"Listando arquivos em '{MOUNT_POINT}':")
-        for entry in os.listdir(MOUNT_POINT):
-            print(entry)
+        for file in os.listdir(MOUNT_POINT):
+            tam = arquivo_bytes_tam(file)
+            espaco += tam
+            print(f"{file} | {tam} bytes")
     else:
         print(f"O ponto de montagem '{MOUNT_POINT}' não existe ou não está montado.")
+
+    print("\n=========== Armazenamento do disco ===========")
+    espaco_ocupado = espaco / DISK_SIZE #espaço ocupado dividido por 1GB
+    espaco_livre = (DISK_SIZE - espaco)/DISK_SIZE
+
+    print(f"Total: 1 GB | Espaço ocupado: {espaco_ocupado} GB | Espaço livre: {espaco_livre} GB")
+    
 
 def desmontar_disco():
     subprocess.run(["sudo", "umount", MOUNT_POINT])
