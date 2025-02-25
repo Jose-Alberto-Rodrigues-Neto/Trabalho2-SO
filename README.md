@@ -7,14 +7,14 @@ Pode ter apenas o diretório raiz e arquivos com nomes de tamanho limitado (ganh
 
 ## B. O sistema deve aceitar os seguintes comandos:
 
-### 1. criar nome tam
+### 1. criar nome tam `(Feito)`
 Cria um arquivo com nome "nome" (pode ser limitado o tamanho do nome) com uma lista aleatória de números inteiros positivos de 32 bits. O argumento "tam" indica a quantidade de números. A lista pode ser guardada em formato binário ou como string (lista de números legíveis separados por algum separador, como vírgula ou espaço).
 
-### 2. apagar nome
+### 2. apagar nome `(Feito)`
 Apaga o arquivo com o nome passado no argumento.
 
-### 3. listar
-Lista os arquivos no diretório. Deve mostrar, ao lado de cada arquivo, o seu tamanho em bytes. Ao final, deve mostrar também o espaço total do "disco" e o espaço disponível.
+### 3. listar `(Feito)`
+Lista os arquivos no diretório. Deve mostrar, ao lado de cada arquivo, o seu tamanho em bytes. Ao final, deve mostrar também o espaço total do "disco" `(imagino que seja 1GB)` e o espaço disponível.
 
 ### 4. ordenar nome
 Ordena a lista no arquivo com o nome passado no argumento. O algoritmo de ordenação a ser utilizado é livre, podendo inclusive ser utilizado alguma implementação de biblioteca existente. Ao terminar a ordenação, deve ser exibido o tempo gasto em ms.
