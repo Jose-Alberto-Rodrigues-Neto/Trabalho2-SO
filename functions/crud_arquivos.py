@@ -1,9 +1,15 @@
+from functions.directory import espaco_ocupado_disco
 import os
 import random
 import struct
 
 #Criar
 def criar_nome_tam(nome: str, tam: int):
+    espaco_ocupado = espaco_ocupado_disco()
+    if (espaco_ocupado >= 1):
+        print("Erro: Não é mais possível criar arquivos, o disco está cheio!")
+        return
+    
     nome_arquivo = nome + ".bin"
     os.makedirs("directory", exist_ok=True)
     path = os.path.join("directory", nome_arquivo)
@@ -30,10 +36,11 @@ def criar_nome_tam(nome: str, tam: int):
 #Ler
 def ler_arquivo_bin(nome: str):
     nome_arquivo = nome + ".bin"
+    path = os.path.join("directory", nome_arquivo)
     numeros = []
 
     try:
-        with open(nome_arquivo, "rb") as f:
+        with open(path, "rb") as f:
             while True:
                 dados = f.read(4)  
                 if not dados:
@@ -49,8 +56,9 @@ def ler_arquivo_bin(nome: str):
 #Deletar
 def apagar_nome(nome: str):
     nome_arquivo = nome + ".bin"
+    path = os.path.join("directory", nome_arquivo)
     try:
-        os.remove(nome_arquivo)
+        os.remove(path)
         print(f"Arquivo '{nome_arquivo}' deletado com sucesso.")
     except FileNotFoundError:
         print(f"Erro: Arquivo {nome_arquivo} não encontrado")
