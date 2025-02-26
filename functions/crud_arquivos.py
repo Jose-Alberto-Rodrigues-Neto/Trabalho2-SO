@@ -1,5 +1,5 @@
 from functions.directory import espaco_ocupado_disco
-from functions.disk_utils import MOUNT_POINT
+from functions.disk_utils import MOUNT_POINT, NUM_TAM_LIMIT, BLOCK_SIZE
 import os
 import random
 import struct
@@ -24,18 +24,20 @@ def criar_nome_tam(nome: str, tam: int):
     if os.path.exists(path):
         print(f"Erro: O arquivo '{nome_arquivo}' já existe!")
         return
-    
-    try:
-        numeros = [random.randint(0, 2**31 - 1) for _ in range(tam)]
+    if tam <= NUM_TAM_LIMIT:
+        try:
+            numeros = [random.randint(0, 2**31 - 1) for _ in range(tam)]
+            
+            with open(path, "wb") as f:
+                for num in numeros:
+                    f.write(struct.pack("I", num))
+            
+            print(f"Arquivo '{nome_arquivo}' criado com {tam} números dentro do disco virtual.")
         
-        with open(path, "wb") as f:
-            for num in numeros:
-                f.write(struct.pack("I", num))
-        
-        print(f"Arquivo '{nome_arquivo}' criado com {tam} números dentro do disco virtual.")
-    
-    except Exception as e:
-        print(f"Erro inesperado: {e}")
+        except Exception as e:
+            print(f"Erro inesperado: {e}")
+    else:
+        print(f"Erro inesperado: o arquivo que você tentou criar excede o limite de armazenamento de 1 bloco: {BLOCK_SIZE}")
     
 #Ler
 def ler_arquivo_bin(nome: str):
