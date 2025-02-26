@@ -1,6 +1,8 @@
 from functions.disk_utils import MOUNT_POINT, DISK_NAME, DISK_SIZE, LOOP_DEVICE
 import os
 import subprocess
+import stat
+import time
 
 def arquivo_bytes_tam(nome: str) -> float | None:
     path = os.path.join(MOUNT_POINT, nome)
@@ -82,20 +84,34 @@ def criar_disco_virtual():
 def listar():
     espaco = 0
     if os.path.exists(MOUNT_POINT) and os.path.ismount(MOUNT_POINT):
-        print(f"Listando arquivos em '{MOUNT_POINT}':")
+        print(f"Listando arquivos em '{MOUNT_POINT}':\n")
+        print(f"{'Nome':<20} {'Tamanho':<10} {'Blocos':<10} {'IO Blocos':<20} {'Inode':<10} {'Permissões':<10} {'Último acesso'}")
+        print("="*90)
+
         for file in os.listdir(MOUNT_POINT):
-            tam = arquivo_bytes_tam(file)
-            espaco += tam
-            print(f"{file} | {tam} bytes")
+            caminho = os.path.join(MOUNT_POINT, file)
+            info = os.stat(caminho)
+            
+            tamanho = info.st_size
+            inodes = info.st_ino
+            blocos = info.st_blocks
+            io_block = info.st_blksize
+            permissoes = stat.filemode(info.st_mode)
+            ultimo_acesso = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(info.st_atime))
+
+            espaco += tamanho
+            print(f"{file:<20} {tamanho:<10} {blocos:<10} {io_block:<20} {inodes:<10} {permissoes:<10} {ultimo_acesso}")
+
     else:
         print(f"O ponto de montagem '{MOUNT_POINT}' não existe ou não está montado.")
 
-    print("\n=========== Armazenamento do disco ===========")
-    espaco_ocupado = espaco / DISK_SIZE #espaço ocupado dividido por 1GB
-    espaco_livre = (DISK_SIZE - espaco)/DISK_SIZE
+    print("\n=========== Armazenamento do disco ===========\n")
+    espaco_ocupado = espaco / DISK_SIZE  # Espaço ocupado dividido por 1GB
+    espaco_livre = (DISK_SIZE - espaco) / DISK_SIZE
 
-    print(f"Total: 1 GB | Espaço ocupado: {espaco_ocupado} GB | Espaço livre: {espaco_livre} GB")
-    
+    print(f"Espaço Total: 1 GB | Espaço ocupado: {espaco_ocupado} GB | Espaço livre: {espaco_livre} GB")
+
+
 
 def desmontar_disco():
     subprocess.run(["sudo", "umount", MOUNT_POINT])
