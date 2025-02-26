@@ -60,6 +60,31 @@ def ler_arquivo_bin(nome: str):
         print(f"Erro inesperado: {e}")
 
     return numeros
+# ler sublista do arquivo
+def ler_sublista(nome: str, ini: int, fim: int):
+    nome_arquivo = nome + ".bin"
+    path = os.path.join(MOUNT_POINT, nome_arquivo)
+    
+    try:
+        with open(path, "rb") as f:
+            f.seek(ini * 4)  # Pula para o índice inicial (4 bytes por número)
+            sublista = []
+
+            for _ in range(ini, fim + 1):
+                dados = f.read(4)
+                if not dados:
+                    break  # Sai se o final do arquivo for atingido
+                numero = struct.unpack("I", dados)[0]
+                sublista.append(numero)
+
+        return sublista
+
+    except FileNotFoundError:
+        print(f"Erro: Arquivo '{nome_arquivo}' não encontrado.")
+        return None
+    except Exception as e:
+        print(f"Erro inesperado: {e}")
+        return None
 
 #Deletar
 def apagar_nome(nome: str):

@@ -26,7 +26,7 @@ Lista os arquivos no diretório. Deve mostrar, ao lado de cada arquivo, o seu ta
 ### 4. ordenar nome
 Ordena a lista no arquivo `(De preferência usar Merge Sort, pq pode ser que tenha mais de mil números dentro do arquivo, ou outra forma ler o item C, importante para essa etapa)` com o nome passado no argumento. O algoritmo de ordenação a ser utilizado é livre, podendo inclusive ser utilizado alguma implementação de biblioteca existente. Ao terminar a ordenação, deve ser exibido o tempo gasto em ms.
 
-### 5. ler nome inicio fim
+### 5. ler nome inicio fim `(Feito)`
 Exibe a sublista de um arquivo com o nome passado com o argumento. O intervalo da lista é dado pelos argumentos inicio e fim. `(pelo que entendi é pra printar os números armazenados em um arquivo de um ponto inicial até um final, ex: printar os valores do indice 3 até o 24)`
 
 ### 6. concatenar nome1 nome2
