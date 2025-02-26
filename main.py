@@ -13,7 +13,7 @@ print("\n=================== Sistema de gerenciamento de arquivos ==============
 
 while(is_running):
     
-    print("\nO que você deseja fazer:\n1 - Listar todos os arquivos do disco\n2 - Criar arquivo no disco\n3 - Apagar arquivo no disco\n4 - Resetar disco\n5 - Sair")
+    print("\nO que você deseja fazer:\n1 - Listar todos os arquivos do disco\n2 - Criar arquivo no disco\n3 - Apagar arquivo no disco\n4 - Ler arquivo\n5 - Resetar disco\n6 - Sair")
     x = int(input())
     match(x):
         case 1:
@@ -30,6 +30,13 @@ while(is_running):
             apagar_nome(arq)
         case 4:
             os.system("clear")
+            arq = str(input("Entre com o nome do arquivo que você deseja ler: "))
+            data = ler_arquivo_bin(arq)
+            if  data != None:
+                print(data)
+                print(f"Tamanho do array de dados: {len(data)}")
+        case 5:
+            os.system("clear")
             res = str(input("\rVocê tem certeza que deseja resetar o disco? (s/n): "))
             if(res == "s"):
                 print("Apagando disco...")
@@ -37,7 +44,7 @@ while(is_running):
                 print("Disco apagado!\nRecriando disco...")
                 criar_disco_virtual()
                 print("Disco criado!")
-        case 5:
+        case 6:
             os.system("clear")
             print("Fim do sistema!")
             is_running = False 
