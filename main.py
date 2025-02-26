@@ -1,5 +1,4 @@
 import os
-import time
 from functions.crud_arquivos import criar_nome_tam, ler_arquivo_bin, apagar_nome
 from functions.directory import criar_disco_virtual, listar, desmontar_disco
 from functions.disk_utils import MOUNT_POINT
