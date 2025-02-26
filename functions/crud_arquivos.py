@@ -24,7 +24,7 @@ def criar_nome_tam(nome: str, tam: int):
     if os.path.exists(path):
         print(f"Erro: O arquivo '{nome_arquivo}' já existe!")
         return
-    if tam <= NUM_TAM_LIMIT:
+    if tam <= NUM_TAM_LIMIT: # Não sei se essa checagem é necessária
         try:
             numeros = [random.randint(0, 2**31 - 1) for _ in range(tam)]
             
