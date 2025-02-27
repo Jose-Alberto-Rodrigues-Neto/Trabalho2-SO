@@ -1,5 +1,5 @@
 import os
-from functions.crud_arquivos import criar_nome_tam, ler_arquivo_bin, apagar_nome, ler_sublista
+from functions.crud_arquivos import criar_nome_tam, ler_arquivo_bin, apagar_nome, ler_sublista, ordenar_arquivo_bin
 from functions.directory import criar_disco_virtual, listar, desmontar_disco
 from functions.disk_utils import MOUNT_POINT
 
@@ -45,6 +45,11 @@ while(is_running):
                 print(f"Tamanho do array de dados: {len(data)}")
         case 6:
             os.system("clear")
+            arq = str(input("Entre com o nome do aquivo que você deseja ordenar: "))
+            time = ordenar_arquivo_bin(arq)
+            print("Tempo para ordenar foi de ", time*1000, " milisegundos")
+        case 7:
+            os.system("clear")
             res = str(input("\rVocê tem certeza que deseja resetar o disco? (s/n): "))
             if(res == "s"):
                 print("Apagando disco...")
@@ -52,7 +57,7 @@ while(is_running):
                 print("Disco apagado!\nRecriando disco...")
                 criar_disco_virtual()
                 print("Disco criado!")
-        case 7:
+        case 8:
             os.system("clear")
             print("Fim do sistema!")
             is_running = False 

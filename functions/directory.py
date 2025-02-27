@@ -1,4 +1,4 @@
-from functions.disk_utils import MOUNT_POINT, DISK_NAME, DISK_SIZE, LOOP_DEVICE
+from functions.disk_utils import MOUNT_POINT, DISK_NAME, DISK_SIZE, LOOP_DEVICE, HUGE_PAGE_SIZE
 import os
 import subprocess
 import stat
@@ -80,6 +80,17 @@ def criar_disco_virtual():
     subprocess.run(["sudo", "chown", f"{uid}:{gid}", MOUNT_POINT], check=True)
 
     print(f"Disco virtual montado com sucesso em '{MOUNT_POINT}'!")
+
+    print("Criando Huge Page para ordenação")
+    path = os.path.join(MOUNT_POINT, "huge_page.bin")
+    HUGE_PAGE_SIZE = 2 * 1024 * 1024  # 2MB
+
+    try:
+        with open(path, "wb") as f:
+            f.truncate(HUGE_PAGE_SIZE)  # Aloca 2MB no disco
+        print(f"Huge page de 2MB criada para 'huge_page.bin'.")
+    except Exception as e:
+        print(f"Erro inesperado ao criar a huge page: {e}")
 
 def listar():
     espaco = 0

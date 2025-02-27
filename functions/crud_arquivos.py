@@ -3,6 +3,8 @@ from functions.disk_utils import MOUNT_POINT, NUM_TAM_LIMIT, BLOCK_SIZE
 import os
 import random
 import struct
+import mmap
+import time
 
 #Criar
 def criar_nome_tam(nome: str, tam: int):
@@ -81,6 +83,42 @@ def ler_sublista(nome: str, ini: int, fim: int):
 
     except FileNotFoundError:
         print(f"Erro: Arquivo '{nome_arquivo}' não encontrado.")
+        return None
+    except Exception as e:
+        print(f"Erro inesperado: {e}")
+        return None
+
+def ordenar_arquivo_bin(nome: str):
+    nome_arquivo = nome + ".bin"
+    path_arquivo = os.path.join(MOUNT_POINT, nome_arquivo)
+    path_huge_page = os.path.join(MOUNT_POINT, "huge_page.bin")
+
+    try:
+        start_time = time.time()
+
+        with open(path_arquivo, "r+b") as f, open(path_huge_page, "r+b") as huge_page:
+            file_size = os.path.getsize(path_arquivo)
+
+            for offset in range(0, file_size, HUGE_PAGE_SIZE):
+                chunk_size = min(HUGE_PAGE_SIZE, file_size - offset)
+
+                with mmap.mmap(f.fileno(), chunk_size, offset=offset, access=mmap.ACCESS_READ) as mm:
+                    numeros = list(struct.unpack(f"{chunk_size // 4}I", mm[:chunk_size]))
+
+                numeros.sort()
+
+                with mmap.mmap(huge_page.fileno(), chunk_size, access=mmap.ACCESS_WRITE) as hm:
+                    hm.write(struct.pack(f"{len(numeros)}I", *numeros))
+
+                with mmap.mmap(f.fileno(), chunk_size, offset=offset, access=mmap.ACCESS_WRITE) as mm:
+                    mm.write(struct.pack(f"{len(numeros)}I", *numeros))
+
+        end_time = time.time()
+
+        return end_time - start_time
+
+    except FileNotFoundError:
+        print(f"Erro: Arquivo '{nome_arquivo}' ou huge page '{path_huge_page}' não encontrado.")
         return None
     except Exception as e:
         print(f"Erro inesperado: {e}")
