@@ -30,7 +30,7 @@ Ordena a lista no arquivo `(De preferência usar Merge Sort, pq pode ser que ten
 Exibe a sublista de um arquivo com o nome passado com o argumento. O intervalo da lista é dado pelos argumentos inicio e fim. `(pelo que entendi é pra printar os números armazenados em um arquivo de um ponto inicial até um final, ex: printar os valores do indice 3 até o 24)`
 
 ### 6. concatenar nome1 nome2
-Concatena dois arquivos com os nomes dados de argumento. O arquivo concatenado pode ter um novo nome predeterminado ou simplesmente pode assumir o nome do primeiro arquivo. Os arquivos originais devem deixar de existir. `(Para isso os dois arquivos devem ter um espaço simultanêo menor do que 4096 bytes, pois se não ultrapassa o valor total do tamanho do arquivo)`
+Concatena dois arquivos com os nomes dados de argumento. O arquivo concatenado pode ter um novo nome predeterminado ou simplesmente pode assumir o nome do primeiro arquivo. Os arquivos originais devem deixar de existir.
 
 ## C. Gerenciamento de memória
 Deve ser alocado uma "Huge Page" (no Linux, ou equivalente em outro S.O.) de 2 MBytes para ser realizado o trabalho de ordenação. Nada mais de memória pode ser utilizado para isso, ou seja, deve ser implementada uma paginação com o disco. Para tal, você pode "particionar" o seu disco virtual, mantendo uma área fora do sistemas de arquivos para utilizar na troca de páginas, ou criar um arquivo para paginação dentro do seu sistema de arquivos.

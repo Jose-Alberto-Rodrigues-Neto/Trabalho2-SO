@@ -52,7 +52,8 @@ while(is_running):
             os.system("clear")
             arq1 = str(input("Entre com o nome do primeiro arquivo a se concatenar: "))
             arq2 = str(input("Entre com o nome do segundo arquivo a se concatenar: "))
-            concatenar_arquivos(arq1, arq2)
+            newarq = arq1 + arq2
+            concatenar_arquivos(arq1, arq2, newarq)
         case 8:
             os.system("clear")
             res = str(input("\rVocê tem certeza que deseja resetar o disco? (s/n): "))

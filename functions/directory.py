@@ -96,7 +96,7 @@ def listar():
     espaco = 0
     if os.path.exists(MOUNT_POINT) and os.path.ismount(MOUNT_POINT):
         print(f"Listando arquivos em '{MOUNT_POINT}':\n")
-        print(f"{'Nome':<20} {'Tamanho':<10} {'Blocos':<10} {'IO Blocos':<20} {'Inode':<10} {'Permissões':<10} {'Último acesso'}")
+        print(f"{'Nome':<20} {'Tamanho':<10} {'Blocos':<10} {'IO Blocos':<12} {'Inode':<10} {'Permissões':<10} {'Último acesso'}")
         print("="*90)
 
         for file in os.listdir(MOUNT_POINT):
@@ -111,7 +111,7 @@ def listar():
             ultimo_acesso = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(info.st_atime))
 
             espaco += tamanho
-            print(f"{file:<20} {tamanho:<10} {blocos:<10} {io_block:<20} {inodes:<10} {permissoes:<10} {ultimo_acesso}")
+            print(f"{file:<20} {tamanho:<10} {blocos:<10} {io_block:<12} {inodes:<10} {permissoes:<10} {ultimo_acesso}")
 
     else:
         print(f"O ponto de montagem '{MOUNT_POINT}' não existe ou não está montado.")

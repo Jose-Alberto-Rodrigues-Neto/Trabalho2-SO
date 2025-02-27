@@ -1,5 +1,5 @@
 from functions.directory import espaco_ocupado_disco
-from functions.disk_utils import MOUNT_POINT, NUM_TAM_LIMIT, BLOCK_SIZE, HUGE_PAGE_SIZE
+from functions.disk_utils import MOUNT_POINT, HUGE_PAGE_SIZE
 import os
 import random
 import struct
@@ -26,20 +26,17 @@ def criar_nome_tam(nome: str, tam: int):
     if os.path.exists(path):
         print(f"Erro: O arquivo '{nome_arquivo}' já existe!")
         return
-    if tam <= NUM_TAM_LIMIT: # Não sei se essa checagem é necessária
-        try:
-            numeros = [random.randint(0, 2**31 - 1) for _ in range(tam)]
+    try:
+        numeros = [random.randint(0, 2**31 - 1) for _ in range(tam)]
             
-            with open(path, "wb") as f:
-                for num in numeros:
-                    f.write(struct.pack("I", num))
+        with open(path, "wb") as f:
+            for num in numeros:
+                f.write(struct.pack("I", num))
             
-            print(f"Arquivo '{nome_arquivo}' criado com {tam} números dentro do disco virtual.")
-        
-        except Exception as e:
+        print(f"Arquivo '{nome_arquivo}' criado com {tam} números dentro do disco virtual.")
+    
+    except Exception as e:
             print(f"Erro inesperado: {e}")
-    else:
-        print(f"Erro inesperado: o arquivo que você tentou criar excede o limite de armazenamento de 1 bloco: {BLOCK_SIZE}")
     
 #Ler
 def ler_arquivo_bin(nome: str):
@@ -136,6 +133,9 @@ def concatenar_arquivos(nome1: str, nome2: str, nome_saida: str):
             f_saida.write(f1.read())
             f_saida.write(f2.read())
         print(f"Arquivos '{nome1}.bin' e '{nome2}.bin' concatenados em '{nome_saida}.bin'.")
+        
+        apagar_nome(nome1)
+        apagar_nome(nome2)
     except FileNotFoundError:
         print("Erro: Um dos arquivos não foi encontrado.")
     except Exception as e:
