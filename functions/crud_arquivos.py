@@ -1,25 +1,26 @@
 from functions.directory import espaco_ocupado_disco
-from functions.disk_utils import MOUNT_POINT, HUGE_PAGE_SIZE
+from functions.disk_utils import MOUNT_POINT, HUGE_PAGE_SIZE, NUM_SIZE
 import os
 import random
 import struct
 import mmap
 import time
+import heapq
 
 #Criar
 def criar_nome_tam(nome: str, tam: int):
     if not os.path.ismount(MOUNT_POINT):
         print("Erro: O disco virtual não está montado!")
         return
-    
+
     if espaco_ocupado_disco() >= 1:  # Verifica se o disco está cheio
         print("Erro: Não é mais possível criar arquivos, o disco está cheio!")
         return
-    
+
     if tam <= 0:
         print("Erro: 'tam' deve ser maior que zero.")
         return
-    
+
     nome_arquivo = f"{nome}.bin"
     path = os.path.join(MOUNT_POINT, nome_arquivo)
 
@@ -28,16 +29,16 @@ def criar_nome_tam(nome: str, tam: int):
         return
     try:
         numeros = [random.randint(0, 2**31 - 1) for _ in range(tam)]
-            
+
         with open(path, "wb") as f:
             for num in numeros:
                 f.write(struct.pack("I", num))
-            
+
         print(f"Arquivo '{nome_arquivo}' criado com {tam} números dentro do disco virtual.")
-    
+
     except Exception as e:
             print(f"Erro inesperado: {e}")
-    
+
 #Ler
 def ler_arquivo_bin(nome: str):
     nome_arquivo = nome + ".bin"
@@ -47,10 +48,10 @@ def ler_arquivo_bin(nome: str):
     try:
         with open(path, "rb") as f:
             while True:
-                dados = f.read(4)  
+                dados = f.read(4)
                 if not dados:
-                    break  
-                numero = struct.unpack("I", dados)[0] 
+                    break
+                numero = struct.unpack("I", dados)[0]
                 numeros.append(numero)
     except FileNotFoundError:
         print(f"Erro: Arquivo '{nome_arquivo}' não encontrado.")
@@ -63,7 +64,7 @@ def ler_arquivo_bin(nome: str):
 def ler_sublista(nome: str, ini: int, fim: int):
     nome_arquivo = nome + ".bin"
     path = os.path.join(MOUNT_POINT, nome_arquivo)
-    
+
     try:
         with open(path, "rb") as f:
             f.seek(ini * 4)  # Pula para o índice inicial (4 bytes por número)
@@ -86,41 +87,57 @@ def ler_sublista(nome: str, ini: int, fim: int):
         return None
 
 #Ordenar
-def ordenar_arquivo_bin(nome: str):
-    nome_arquivo = nome + ".bin"
-    path_arquivo = os.path.join(MOUNT_POINT, nome_arquivo)
-    path_huge_page = os.path.join(MOUNT_POINT, "huge_page.bin")
+def split_file(file_path):
+    temp_files = []
+    with open(file_path, "rb") as f:
+        count = 0
+        while True:
+            data = f.read(HUGE_PAGE_SIZE)
+            if not data:
+                break
+            numbers = list(struct.unpack(f"{len(data) // NUM_SIZE}I", data))
+            numbers.sort()
+            temp_file = os.path.join(MOUNT_POINT, f"temp_{count}.bin")
+            temp_files.append(temp_file)
+            with open(temp_file, "wb") as temp_f:
+                temp_f.write(struct.pack(f"{len(numbers)}I", *numbers))
+            count += 1
+    return temp_files
 
-    try:
-        start_time = time.time()
+def merge_files(temp_files, output_file):
+    min_heap = []
+    file_pointers = []
 
-        with open(path_arquivo, "r+b") as f, open(path_huge_page, "r+b") as huge_page:
-            file_size = os.path.getsize(path_arquivo)
+    for i, temp_file in enumerate(temp_files):
+        f = open(temp_file, "rb")
+        file_pointers.append(f)
+        data = f.read(NUM_SIZE)
+        if data:
+            num = struct.unpack("I", data)[0]
+            heapq.heappush(min_heap, (num, i))
 
-            for offset in range(0, file_size, HUGE_PAGE_SIZE):
-                chunk_size = min(HUGE_PAGE_SIZE, file_size - offset)
+    with open(output_file, "wb") as out_f:
+        while min_heap:
+            num, i = heapq.heappop(min_heap)
+            out_f.write(struct.pack("I", num))
+            data = file_pointers[i].read(NUM_SIZE)
+            if data:
+                new_num = struct.unpack("I", data)[0]
+                heapq.heappush(min_heap, (new_num, i))
 
-                with mmap.mmap(f.fileno(), chunk_size, offset=offset, access=mmap.ACCESS_READ) as mm:
-                    numeros = list(struct.unpack(f"{chunk_size // 4}I", mm[:chunk_size]))
+    for f in file_pointers:
+        f.close()
+    for temp_file in temp_files:
+        os.remove(temp_file)
 
-                numeros.sort()
-
-                with mmap.mmap(huge_page.fileno(), chunk_size, access=mmap.ACCESS_WRITE) as hm:
-                    hm.write(struct.pack(f"{len(numeros)}I", *numeros))
-
-                with mmap.mmap(f.fileno(), chunk_size, offset=offset, access=mmap.ACCESS_WRITE) as mm:
-                    mm.write(struct.pack(f"{len(numeros)}I", *numeros))
-
-        end_time = time.time()
-
-        return end_time - start_time
-
-    except FileNotFoundError:
-        print(f"Erro: Arquivo '{nome_arquivo}' ou huge page '{path_huge_page}' não encontrado.")
-        return None
-    except Exception as e:
-        print(f"Erro inesperado: {e}")
-        return None
+def ordenar_arquivo_bin(file_name):
+    start_time = time.time()
+    file_path = os.path.join(MOUNT_POINT, f"{file_name}.bin")
+    temp_files = split_file(file_path)
+    merge_files(temp_files, file_path)
+    end_time = time.time()
+    print(f"Arquivo '{file_name}.bin' ordenado com sucesso.")
+    return end_time - start_time
 
 #Concatenar
 def concatenar_arquivos(nome1: str, nome2: str, nome_saida: str):
