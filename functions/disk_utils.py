@@ -4,4 +4,4 @@ DISK_SIZE = 1 * 1024 * 1024 * 1024  # 1 GB
 HUGE_PAGE_SIZE = 2 * 1024 * 1024    # 2 MB
 MOUNT_POINT = "mnt_virtual"
 LOOP_DEVICE = "/dev/loop0"          # Dispositivo de loop fixo
-NUM_SIZE = 4
+NUM_SIZE = 4                        # 4 bytes (tamanho de um número inteiro)
