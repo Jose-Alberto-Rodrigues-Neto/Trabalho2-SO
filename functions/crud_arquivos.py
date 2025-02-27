@@ -1,5 +1,5 @@
 from functions.directory import espaco_ocupado_disco
-from functions.disk_utils import MOUNT_POINT, NUM_TAM_LIMIT, BLOCK_SIZE
+from functions.disk_utils import MOUNT_POINT, NUM_TAM_LIMIT, BLOCK_SIZE, HUGE_PAGE_SIZE
 import os
 import random
 import struct
@@ -88,6 +88,7 @@ def ler_sublista(nome: str, ini: int, fim: int):
         print(f"Erro inesperado: {e}")
         return None
 
+#Ordenar
 def ordenar_arquivo_bin(nome: str):
     nome_arquivo = nome + ".bin"
     path_arquivo = os.path.join(MOUNT_POINT, nome_arquivo)
@@ -123,6 +124,22 @@ def ordenar_arquivo_bin(nome: str):
     except Exception as e:
         print(f"Erro inesperado: {e}")
         return None
+
+#Concatenar
+def concatenar_arquivos(nome1: str, nome2: str, nome_saida: str):
+    path1 = os.path.join(MOUNT_POINT, nome1 + ".bin")
+    path2 = os.path.join(MOUNT_POINT, nome2 + ".bin")
+    path_saida = os.path.join(MOUNT_POINT, nome_saida + ".bin")
+    
+    try:
+        with open(path1, "rb") as f1, open(path2, "rb") as f2, open(path_saida, "wb") as f_saida:
+            f_saida.write(f1.read())
+            f_saida.write(f2.read())
+        print(f"Arquivos '{nome1}.bin' e '{nome2}.bin' concatenados em '{nome_saida}.bin'.")
+    except FileNotFoundError:
+        print("Erro: Um dos arquivos não foi encontrado.")
+    except Exception as e:
+        print(f"Erro inesperado: {e}")
 
 #Deletar
 def apagar_nome(nome: str):

@@ -1,5 +1,5 @@
 import os
-from functions.crud_arquivos import criar_nome_tam, ler_arquivo_bin, apagar_nome, ler_sublista, ordenar_arquivo_bin
+from functions.crud_arquivos import criar_nome_tam, ler_arquivo_bin, apagar_nome, ler_sublista, ordenar_arquivo_bin, concatenar_arquivos
 from functions.directory import criar_disco_virtual, listar, desmontar_disco
 from functions.disk_utils import MOUNT_POINT
 
@@ -12,7 +12,7 @@ print("\n=================== Sistema de gerenciamento de arquivos ==============
 
 while(is_running):
     
-    print("\nO que você deseja fazer:\n1 - Listar todos os arquivos do disco\n2 - Criar arquivo no disco\n3 - Apagar arquivo no disco\n4 - Ler arquivo\n5 - Ler sublista\n6 - Remontar disco\n7 - Sair")
+    print("\nO que você deseja fazer:\n1 - Listar todos os arquivos do disco\n2 - Criar arquivo no disco\n3 - Apagar arquivo no disco\n4 - Ler arquivo\n5 - Ler sublista\n6 - Ordenar arquivo\n7 - Concatenar arquivos\n8 - Remontar disco\n9 - Sair")
     x = int(input())
     match(x):
         case 1:
@@ -50,6 +50,11 @@ while(is_running):
             print("Tempo para ordenar foi de ", time*1000, " milisegundos")
         case 7:
             os.system("clear")
+            arq1 = str(input("Entre com o nome do primeiro arquivo a se concatenar: "))
+            arq2 = str(input("Entre com o nome do segundo arquivo a se concatenar: "))
+            concatenar_arquivos(arq1, arq2)
+        case 8:
+            os.system("clear")
             res = str(input("\rVocê tem certeza que deseja resetar o disco? (s/n): "))
             if(res == "s"):
                 print("Apagando disco...")
@@ -57,10 +62,10 @@ while(is_running):
                 print("Disco apagado!\nRecriando disco...")
                 criar_disco_virtual()
                 print("Disco criado!")
-        case 8:
+        case 9:
             os.system("clear")
             print("Fim do sistema!")
-            is_running = False 
+            is_running = False
         
 
     print("\n============================================================================\n")            
